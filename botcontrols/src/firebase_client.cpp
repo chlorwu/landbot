@@ -13,33 +13,32 @@ WiFiClientSecure ssl_client;
 using AsyncClient = AsyncClientClass;
 AsyncClient async_client(ssl_client);
 
-int parseNumericPoints(const String &jsonPayload)
-{
-    int total = 0;
-
+int parseNumericPoints(const String &jsonPayload) {
     JsonDocument doc;
 
     DeserializationError error = deserializeJson(doc, jsonPayload);
-
-    if (error)
-    {
+    if (error) {
         Serial.print("JSON parsing failed: ");
         Serial.println(error.c_str());
         return -1;
     }
 
+    int total = 0;
+
     JsonObject players = doc.as<JsonObject>();
 
-    for (JsonPair player : players)
-    {
-        total += player.value().as<int>();
+    for (JsonPair player : players) {
+        JsonObject playerData = player.value().as<JsonObject>();
+
+        if (playerData["points"].is<int>()) {
+            total += playerData["points"].as<int>();
+        }
     }
 
     return total;
 }
 
-void setupFirebase()
-{
+void setupFirebase() {
     Serial.println("Initializing Firebase...");
 
     ssl_client.setInsecure();
@@ -50,18 +49,15 @@ void setupFirebase()
     Serial.println("Firebase initialized.");
 }
 
-int getTotalPoints()
-{
-    if (!app.ready())
-    {
+int getTotalPoints() {
+    if (!app.ready()) {
         Serial.println("Firebase app not ready");
         return -1;
     }
 
     String json = Database.get<String>(async_client, "/players");
 
-    if (json.length() == 0 || json == "null")
-    {
+    if (json.length() == 0 || json == "null") {
         Serial.println("No players data found");
         return 0;
     }
