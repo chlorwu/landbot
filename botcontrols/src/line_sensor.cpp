@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#include "../include/line_sensors.h"
+#include "../include/line_sensor.h"
 
 const int LEFT2_PIN  = 13;
 const int LEFT1_PIN  = 12;
