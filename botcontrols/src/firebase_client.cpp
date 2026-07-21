@@ -39,8 +39,8 @@ int parseNumericPoints(const String &jsonPayload) {
 
         JsonObject playerData = player.value().as<JsonObject>();
 
-        if (playerData["points"].is<int>()) {
-            total += playerData["points"].as<int>();
+        if (playerData["score"].is<int>()) {
+            total += playerData["score"].as<int>();
         }
     }
 
