@@ -13,14 +13,22 @@ void setupWifi()
     WiFi.mode(WIFI_STA);
     WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 
-    while (WiFi.status() != WL_CONNECTED)
+    unsigned long start = millis();
+
+    while (WiFi.status() != WL_CONNECTED && millis() - start < 15000)
     {
-        delay(300);
         Serial.print(".");
+        delay(500);
     }
 
     Serial.println();
-    Serial.println("WiFi connected!");
-    Serial.print("IP address: ");
-    Serial.println(WiFi.localIP());
+
+    if (WiFi.status() == WL_CONNECTED) {
+        Serial.println("WiFi connected!");
+        Serial.println(WiFi.localIP());
+    } else {
+        Serial.print("Failed. Status = ");
+        Serial.println(WiFi.status());
+        Serial.println("Is Chloe's hotspot on??");
+    }
 }

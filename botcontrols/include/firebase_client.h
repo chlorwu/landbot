@@ -6,6 +6,8 @@
 #include <FirebaseClient.h>
 
 void setupFirebase();
+void firebaseLoop();
+bool waitForFirebaseReady(unsigned long timeoutMs = 15000);
 int getTotalPoints();
 int parseNumericPoints(const String &jsonPayload);
 
