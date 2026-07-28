@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getDatabase, push, ref, set } from "firebase/database";
+import { getDatabase, ref, set } from "firebase/database";
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -18,12 +18,12 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const db = getDatabase(app)
+export const database = getDatabase(app)
 export async function pushDataWithFirebaseId(score, uuid) {
   if (!uuid) throw new Error("UUID is required");
 
   // Create a reference to the collection node
-  const playerRef = ref(db, `players/${uuid}`, );
+  const playerRef = ref(database, `players/${uuid}`, );
   
     await set(playerRef, {
       score
