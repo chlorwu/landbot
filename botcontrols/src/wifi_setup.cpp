@@ -3,7 +3,7 @@
 #include <Arduino.h>
 
 // this is chloe's personal hotspot
-#define WIFI_SSID "YouCantBelieveItsAHotspot"
+#define WIFI_SSID "Chloe's iPhone"
 #define WIFI_PASSWORD "landbotaccess"
 
 void setupWifi()
