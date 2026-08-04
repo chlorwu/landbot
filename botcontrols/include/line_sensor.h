@@ -7,7 +7,7 @@ enum LineSensorIndex {
     CENTER_RIGHT,
     INNER_RIGHT,
     OUTER_RIGHT,
-    LINE_SENSOR_COUNT
+    LINE_SENSOR_COUNT   
 };
 
 extern bool sensorValues[LINE_SENSOR_COUNT];
