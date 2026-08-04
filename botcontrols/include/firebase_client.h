@@ -8,6 +8,7 @@
 void setupFirebase();
 void firebaseLoop();
 bool waitForFirebaseReady(unsigned long timeoutMs = 15000);
+bool getTotalPoints(int &totalPoints);
 int getTotalPoints();
 int parseNumericPoints(const String &jsonPayload);
 

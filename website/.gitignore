@@ -11,6 +11,12 @@ node_modules
 dist
 dist-ssr
 *.local
+coverage
+
+# Local Firebase config. `.env.example` documents the required keys.
+.env
+.env.*
+!.env.example
 
 # Editor directories and files
 .vscode/*
