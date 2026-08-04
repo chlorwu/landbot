@@ -1,36 +1,37 @@
 #include <Arduino.h>
 #include "../include/line_sensor.h"
 
-const int LEFT2_PIN  = 13;
-const int LEFT1_PIN  = 12;
-const int CENTER_PIN = 14;
-const int RIGHT1_PIN = 27;
-const int RIGHT2_PIN = 26;
+const int SENSOR_PINS[LINE_SENSOR_COUNT] = {5, 18, 19, 21, 22, 23};
+const int LINE_DETECTED_STATE = HIGH;
 
-// Exported so other files can access them
-bool sensorValues[5];
+bool sensorValues[LINE_SENSOR_COUNT];
 
 void setupLineSensors() {
-    pinMode(LEFT2_PIN, INPUT);
-    pinMode(LEFT1_PIN, INPUT);
-    pinMode(CENTER_PIN, INPUT);
-    pinMode(RIGHT1_PIN, INPUT);
-    pinMode(RIGHT2_PIN, INPUT);
+    for (int index = 0; index < LINE_SENSOR_COUNT; index++) {
+        pinMode(SENSOR_PINS[index], INPUT);
+    }
 
     Serial.println("Line sensors initialized");
 }
 
 void updateLineSensors() {
+    for (int index = 0; index < LINE_SENSOR_COUNT; index++) {
+        sensorValues[index] = digitalRead(SENSOR_PINS[index]) == LINE_DETECTED_STATE;
+    }
 
-    sensorValues[0] = digitalRead(LEFT2_PIN)  == HIGH;
-    sensorValues[1] = digitalRead(LEFT1_PIN)  == HIGH;
-    sensorValues[2] = digitalRead(CENTER_PIN) == HIGH;
-    sensorValues[3] = digitalRead(RIGHT1_PIN) == HIGH;
-    sensorValues[4] = digitalRead(RIGHT2_PIN) == HIGH;
+    Serial.print(sensorValues[OUTER_LEFT] ? "BLACK " : "WHITE ");
+    Serial.print(sensorValues[INNER_LEFT] ? "BLACK " : "WHITE ");
+    Serial.print(sensorValues[CENTER_LEFT] ? "BLACK " : "WHITE ");
+    Serial.print(sensorValues[CENTER_RIGHT] ? "BLACK " : "WHITE ");
+    Serial.print(sensorValues[INNER_RIGHT] ? "BLACK " : "WHITE ");
+    Serial.println(sensorValues[OUTER_RIGHT] ? "BLACK" : "WHITE");
+}
 
-    Serial.print(sensorValues[0] ? "BLACK " : "WHITE ");
-    Serial.print(sensorValues[1] ? "BLACK " : "WHITE ");
-    Serial.print(sensorValues[2] ? "BLACK " : "WHITE ");
-    Serial.print(sensorValues[3] ? "BLACK " : "WHITE ");
-    Serial.println(sensorValues[4] ? "BLACK" : "WHITE");
+bool lineIsCentered() {
+    return !sensorValues[OUTER_LEFT]
+        && !sensorValues[INNER_LEFT]
+        && sensorValues[CENTER_LEFT]
+        && sensorValues[CENTER_RIGHT]
+        && !sensorValues[INNER_RIGHT]
+        && !sensorValues[OUTER_RIGHT];
 }

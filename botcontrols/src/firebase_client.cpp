@@ -13,21 +13,21 @@ WiFiClientSecure ssl_client;
 using AsyncClient = AsyncClientClass;
 AsyncClient async_client(ssl_client);
 
-int parseNumericPoints(const String &jsonPayload) {
+bool parseNumericPoints(const String &jsonPayload, int &totalPoints) {
     JsonDocument doc;
 
     DeserializationError error = deserializeJson(doc, jsonPayload);
     if (error) {
         Serial.print("JSON parsing failed: ");
         Serial.println(error.c_str());
-        return -1;
+        return false;
     }
 
     int total = 0;
 
     if (!doc.is<JsonObject>()) {
         Serial.println("Expected /players to be a JSON object");
-        return -1;
+        return false;
     }
 
     JsonObject players = doc.as<JsonObject>();
@@ -42,6 +42,16 @@ int parseNumericPoints(const String &jsonPayload) {
         if (playerData["score"].is<int>()) {
             total += playerData["score"].as<int>();
         }
+    }
+
+    totalPoints = total;
+    return true;
+}
+
+int parseNumericPoints(const String &jsonPayload) {
+    int total = 0;
+    if (!parseNumericPoints(jsonPayload, total)) {
+        return -1;
     }
 
     return total;
@@ -82,25 +92,39 @@ bool waitForFirebaseReady(unsigned long timeoutMs) {
 }
 
 int getTotalPoints() {
+    int total = 0;
+    if (!getTotalPoints(total)) {
+        return -1;
+    }
+
+    return total;
+}
+
+bool getTotalPoints(int &totalPoints) {
     if (!app.ready()) {
         Serial.println("Firebase app not ready");
-        return -1;
+        return false;
     }
 
     String json = Database.get<String>(async_client, "/players");
 
     if (json.length() == 0 || json == "null") {
         Serial.println("No players data found");
-        return 0;
+        totalPoints = 0;
+        return true;
     }
 
     Serial.println("Players data:");
     Serial.println(json);
 
-    int total = parseNumericPoints(json);
+    int total = 0;
+    if (!parseNumericPoints(json, total)) {
+        return false;
+    }
 
     Serial.print("Total points: ");
     Serial.println(total);
 
-    return total;
+    totalPoints = total;
+    return true;
 }
